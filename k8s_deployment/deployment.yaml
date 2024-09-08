@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-k8s-app
+  name: regtech-app
   labels:
-    app: my-k8s-app
+    app: regtech-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: my-k8s-app
+      app: regtech-app
   template:
     metadata:
       labels:
-        app: my-k8s-app
+        app: regtech-app
     spec:
       containers:
-      - name: my-k8s-app
+      - name: regtech-app
         image: <AWS_ECR_REPOSITORY>:latest # Replace with your ECR image
         ports:
         - containerPort: 8080
