@@ -1,12 +1,12 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: my-k8s-app-hpa
+  name: regtech-app-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: my-k8s-app
+    name: regtech-app
   minReplicas: 2
   maxReplicas: 10
   metrics:
