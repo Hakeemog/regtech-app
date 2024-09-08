@@ -1,4 +1,4 @@
-name: CI/CD Pipeline to Deploy regtech applications
+name: CI/CD Pipeline to Deploy Regtech Applications
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
       - name: Set Docker tag
-        run: echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=latest" >> $GITHUB_ENV  # You can replace 'latest' with a unique tag like Git commit SHA
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
@@ -67,8 +67,16 @@ jobs:
     needs: [docker_build_push]
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update Kubernetes Deployment Manifest with New Image
+        run: |
+          sed -i "s|PLACEHOLDER_IMAGE|${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}|g" k8s-deployment.yml
+
       - name: Install ArgoCD CLI
-        run: curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.5.0/argocd-linux-amd64 && chmod +x /usr/local/bin/argocd
+        run: |
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.5.0/argocd-linux-amd64 && chmod +x /usr/local/bin/argocd
 
       - name: ArgoCD Login
         run: |
@@ -89,4 +97,3 @@ jobs:
             argocd app rollback my-k8s-app
             exit 1
           fi
-
