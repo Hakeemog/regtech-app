@@ -1,3 +1,53 @@
+# CI/CD Pipeline (Deliverable 2)
+
+This CI/CD pipeline, defined in GitHub Actions, automates the process of deploying a regtech application to an EKS cluster. It performs the following steps:
+
+Gitleaks Scan: Scans the codebase for sensitive information using Gitleaks.
+SonarQube Analysis: Runs code quality and security analysis using SonarQube.
+Docker Build, Scan, and Push:
+Builds a Docker image of the application.
+Scans the image for vulnerabilities using Trivy.
+Pushes the image to AWS Elastic Container Registry (ECR).
+Deploy to EKS with ArgoCD:
+Logs in to ArgoCD and syncs the application to the EKS cluster.
+Updates the Kubernetes deployment manifest with the latest Docker image.
+Monitors the deployment status and performs a rollback if the deployment fails.
+
+## Environment Variables to be Set
+These variables are required for the CI/CD pipeline to function properly:
+
+### AWS Credentials and Configuration:
+AWS_REGION: AWS region for ECR and EKS.
+AWS_ACCESS_KEY_ID: AWS access key with permissions for ECR and EKS.
+AWS_SECRET_ACCESS_KEY: Secret key for the above AWS access key.
+ECR Repository Details wich include
+ECR_REGISTRY: URI of the AWS ECR registry.
+ECR_REPOSITORY: Name of the AWS ECR repository.
+
+### SonarQube Configuration wich include:
+SONAR_TOKEN: Authentication token for SonarQube.
+SONAR_HOST_URL: URL of the SonarQube server.
+
+### ArgoCD Configuration:
+ARGOCD_SERVER: URL of the ArgoCD server.
+ARGOCD_USERNAME: Username for ArgoCD CLI login.
+ARGOCD_PASSWORD: Password for ArgoCD CLI login.
+
+## Docker Image Tag:
+IMAGE_TAG: The tag of the Docker image (set dynamically in the pipeline using Git commit SHA).
+
+### Where to Set the Variables
+
+GitHub Secrets: Store sensitive variables in your repository under Settings > Secrets and variables > Actions > New repository secret.
+Sensitive Variables are: AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, ECR_REGISTRY, ECR_REPOSITORY, SONAR_TOKEN, SONAR_HOST_URL, ARGOCD_SERVER, ARGOCD_USERNAME, ARGOCD_PASSWORD.
+
+GitHub Actions Environment Variables: Set dynamically within the workflow file (.github/workflows/ci.yml).
+Example: IMAGE_TAG is set using echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV in the docker_build_push job.
+
+
+
+
+
 # Documentation for Regtech Infrastructure Setup  (Deliverable 5)
 
 ## Overview
